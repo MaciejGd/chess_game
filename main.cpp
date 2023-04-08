@@ -11,6 +11,7 @@ int main(){
     vector<Move> previous_moves;
     previous_moves.push_back(first_element_of_list);
     Move move_user;
+    Piece beaten_piece;
 
     //white pieces
     Piece king_white = Piece(7, 4, white, 'K');
@@ -60,7 +61,7 @@ int main(){
             move_user = move_input();
             if(is_move_possible(board, move_user, white, previous_moves) && !is_move_killing_king(board,move_user)){
                 not_proper_move = false;
-                Piece beaten_piece = if_beaten(board, move_user);    
+                beaten_piece = if_beaten(board, move_user);    
                 make_move(board,move_user,previous_moves);
                 if(is_checked(board, king_white, previous_moves)){
                     undo_move(board, previous_moves);
@@ -90,11 +91,16 @@ int main(){
             move_user = move_input();
             if(is_move_possible(board, move_user, black , previous_moves) && !is_move_killing_king(board,move_user)){
                 not_proper_move = false;
+                beaten_piece = if_beaten(board, move_user);
                 make_move(board,move_user,previous_moves);
                 if(is_checked(board, king_black, previous_moves)){
                     undo_move(board, previous_moves);
+                    board[move_user.y_coordinate_target][move_user.x_coordinate_target] = beaten_piece;
                     cout<<"Cant move like this because of check. Try again."<<endl;
                     not_proper_move = true;
+                }
+                else if(is_promotion(board, previous_moves)){
+                    promotion(board, previous_moves);
                 }
             }
             else{

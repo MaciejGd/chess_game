@@ -543,6 +543,15 @@ void make_move(Piece (&board)[8][8], Move desired_move, vector<Move> &list_of_mo
 Piece if_beaten(Piece board[8][8], Move move){
     if(board[move.y_coordinate_target][move.x_coordinate_target].type!=' '){
         return board[move.y_coordinate_target][move.x_coordinate_target]; 
+    }
+    //returning piece beaten with en passant
+    else if(board[move.y_coordinate_target][move.x_coordinate_target].type ==' ' && board[move.y_coordinate_starting][move.x_coordinate_starting].type == 'P' && move.x_coordinate_target!=move.x_coordinate_starting){
+        if(board[move.y_coordinate_starting][move.x_coordinate_starting].color){
+            return board[move.y_coordinate_target+1][move.x_coordinate_target];
+        }
+        else{
+            return board[move.y_coordinate_target-1][move.x_coordinate_target];
+        }
     } 
     return Piece();
 }
