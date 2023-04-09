@@ -331,7 +331,7 @@ bool is_move_possible(Piece board[8][8],Move destination, bool side, vector<Move
             if(is_king_threating_king(board,side,destination)){
                 return false;
             }
-            if(is_checked(board,board[destination.y_coordinate_target][destination.x_coordinate_target], previous_moves)){
+            if(is_king_moving_to_check(board,destination, previous_moves)){
                 return false;
             }
             if(abs(destination.x_coordinate_target-destination.x_coordinate_starting)==1 && abs(destination.y_coordinate_target-destination.y_coordinate_starting)==1){
@@ -420,36 +420,37 @@ bool is_checked(Piece board[8][8], Piece king, vector<Move> previous_moves){
     return false;
 }
 
-bool is_king_threating_king(Piece board[8][8], bool side, Move destination){
-    int x_target = destination.x_coordinate_target;
-    int y_target = destination.y_coordinate_target;
 
-    if(board[y_target+1][x_target+1].type == 'K' && board[y_target+1][x_target+1].color!=side){
-        return true;
+bool is_king_moving_to_check(Piece board[8][8], Move destination , vector<Move> previous_moves){
+    
+    Piece beaten_piece = Piece();
+    if(board[destination.y_coordinate_target][destination.x_coordinate_target].type == 'K'){
+        return false;
     }
-    else if(board[y_target-1][x_target-1].type == 'K' && board[y_target-1][x_target-1].color!=side){
-        return true;
-    }
-    else if(board[y_target+1][x_target-1].type == 'K' && board[y_target+1][x_target-1].color!=side){
-        return true;
-    }
-    else if(board[y_target-1][x_target+1].type == 'K' && board[y_target-1][x_target+1].color!=side){
-        return true;
-    }
-    else if(board[y_target][x_target-1].type == 'K' && board[y_target][x_target-1].color!=side){
-        return true;
-    }
-    else if(board[y_target-1][x_target].type == 'K' && board[y_target-1][x_target].color!=side){
-        return true;
-    }
-    else if(board[y_target+1][x_target].type == 'K' && board[y_target+1][x_target].color!=side){
-        return true;
-    }
-    else if(board[y_target][x_target+1].type == 'K' && board[y_target][x_target+1].color!=side){
-        return true;
+
+    beaten_piece = if_beaten(board, destination);
+
+    board[destination.y_coordinate_target][destination.x_coordinate_target] = board[destination.y_coordinate_starting][destination.x_coordinate_starting];
+    board[destination.y_coordinate_starting][destination.x_coordinate_starting] = Piece();
+    Move checking_move;
+    for(int i = 0; i<8; i++){
+        for(int j = 0; j<8; j++){
+            if(board[i][j].color!=board[destination.y_coordinate_starting][destination.x_coordinate_starting].color && board[i][j].type!=' '&& board[i][j].type!='K'){ 
+                checking_move.y_coordinate_starting = i;
+                checking_move.x_coordinate_starting = j;
+                checking_move.y_coordinate_target = destination.y_coordinate_target;
+                checking_move.x_coordinate_target = destination.x_coordinate_target;
+                if(is_move_possible(board, checking_move,board[i][j].color,previous_moves)){
+                    return true;
+                } 
+            }
+            
+        }
     }
     return false;
 }
+
+
 
 bool is_promotion(Piece board[8][8], vector<Move> previous_moves){
     Move last_move = previous_moves.back();
@@ -586,7 +587,7 @@ bool game_won(Piece (&board)[8][8], Piece king, vector<Move> previous_moves){
                             possible_cover = {i,j,y,x}; 
                             if(is_move_possible(board, possible_cover, king.color, previous_moves)){
                                 make_move(board, possible_cover, previous_moves);
-                                if(is_checked(board, king, previous_moves)){
+                                if(!is_checked(board, king, previous_moves)){
                                     undo_move(board,previous_moves);
                                     return false;
                                 }
@@ -602,12 +603,3 @@ bool game_won(Piece (&board)[8][8], Piece king, vector<Move> previous_moves){
     return false;
 }
 
-/*void return_piece(Piece (&board)[8][8], vector<Move> previous_moves, Piece piece_to_return){
-    Move back_move = previous_moves.back();
-    board[back_move.y_coordinate_target][back_move.x_coordinate_target] = piece_to_return;
-
-    Move checking_en_passant = previous_moves.rbegin()[1];
-    if(){
-
-    }
-}*/
