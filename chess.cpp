@@ -328,9 +328,6 @@ bool is_move_possible(Piece board[8][8],Move destination, bool side, vector<Move
             break;
         //checking if move is possible for King
         case 'K':
-            if(is_king_threating_king(board,side,destination)){
-                return false;
-            }
             if(is_king_moving_to_check(board,destination, previous_moves)){
                 return false;
             }
@@ -576,7 +573,8 @@ bool is_move_killing_king(Piece board[8][8], Move destination){
     return false;
 }
 
-bool game_won(Piece (&board)[8][8], Piece king, vector<Move> previous_moves){
+bool game_won(Piece board[8][8], Piece king, vector<Move> previous_moves){
+    Piece beaten_piece;
     Move possible_cover;
     if(is_checked(board, king, previous_moves)){
         for(int i = 0; i<8; i++){
@@ -586,12 +584,14 @@ bool game_won(Piece (&board)[8][8], Piece king, vector<Move> previous_moves){
                         for(int x = 0; x<8; x++){
                             possible_cover = {i,j,y,x}; 
                             if(is_move_possible(board, possible_cover, king.color, previous_moves)){
-                                make_move(board, possible_cover, previous_moves);
+                                beaten_piece = if_beaten(board, possible_cover);
+                                board[possible_cover.y_coordinate_target][possible_cover.x_coordinate_target] = board[possible_cover.y_coordinate_starting][possible_cover.x_coordinate_starting];
+                                board[possible_cover.y_coordinate_starting][possible_cover.x_coordinate_starting] = Piece();
                                 if(!is_checked(board, king, previous_moves)){
-                                    undo_move(board,previous_moves);
                                     return false;
                                 }
-                                undo_move(board,previous_moves);
+                                board[possible_cover.y_coordinate_starting][possible_cover.x_coordinate_starting] = board[possible_cover.y_coordinate_target][possible_cover.x_coordinate_target];
+                                board[possible_cover.y_coordinate_target][possible_cover.x_coordinate_target] = beaten_piece;
                             }
                         }
                     }

@@ -82,6 +82,7 @@ int main(){
 
         if(game_won(board, king_black, previous_moves)){
             cout<<"White won, good job!";
+            system("PAUSE");
             return 0;
         }
         
@@ -111,6 +112,7 @@ int main(){
         print_board(board);
         if(game_won(board, king_black, previous_moves)){
             cout<<"White won, good job!";
+            system("PAUSE");
             return 0;
         }
         

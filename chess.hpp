@@ -47,6 +47,6 @@ void make_move(Piece (&board)[8][8], Move desired_move, vector<Move> &list_of_mo
 void undo_move(Piece (&board)[8][8], vector<Move> &previous_moves);
 bool is_move_killing_king(Piece board[8][8], Move destination);
 bool is_king_threating_king(Piece board[8][8], bool side, Move destination);
-bool game_won(Piece (&board)[8][8], Piece king, vector<Move> previous_moves);
+bool game_won(Piece board[8][8], Piece king, vector<Move> previous_moves);
 Piece if_beaten(Piece board[8][8], Move move);
 bool is_king_moving_to_check(Piece board[8][8], Move destination, vector<Move> previous_moves);
