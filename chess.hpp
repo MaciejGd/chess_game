@@ -51,3 +51,4 @@ Piece if_beaten(Piece board[8][8], Move move);
 bool is_king_moving_to_check(Piece board[8][8], Move destination, vector<Move> previous_moves);
 //make improvemmetn here
 bool is_castle_possible(Piece board[8][8], bool side, vector<Move> previous_moves, Move castle);
+int translating_chars_to_ints(char first_coordinate);

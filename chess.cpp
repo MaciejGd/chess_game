@@ -7,35 +7,77 @@
 
 using namespace std;
 
-//Types of pieces: P-pawn, B-bishop, Q-queen, K-king, H-horse; R-rook
+//function to read a char as integer we want
+int translating_chars_to_ints(char first_coordinate){
+    int result;
+    switch(first_coordinate){
+        case 'a':
+            result = 0;
+            break;
+        case 'b':
+            result = 1;
+            break;
+        case 'c':
+            result = 2;
+            break;
+        case 'd':
+            result = 3;
+            break;
+        case 'e':
+            result = 4;
+            break;
+        case 'f':
+            result = 5;
+            break;
+        case 'g':
+            result = 6;
+            break;
+        case 'h':
+            result = 7;
+            break;
+        default:
+            result = -1;
+            break;
+    }
+    return result;
+}
 
 //Function to get a move from a user
 Move move_input() {
     Move wanted_move;
     bool valid_coordinates = false;
-    
+    char starting_char;
+    char ending_char;
+    int starting_int;
+    int ending_int;
+
     while (!valid_coordinates) {
         cout << "Enter starting coordinates (y, x): ";
-        cin >> wanted_move.y_coordinate_starting >> wanted_move.x_coordinate_starting;
+        cin >> starting_char >> starting_int;
+        wanted_move.y_coordinate_starting = 8 - starting_int;
 
         if(cin.fail()){
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(),'\n');
-            cout<<"Invalid input, please enter an integer: "<<endl;
+            cout<<"Invalid input, please enter proper coordinates: "<<endl;
         }
 
         cout << "Enter target coordinates (y, x): ";
-        cin >> wanted_move.y_coordinate_target >> wanted_move.x_coordinate_target;
-        
+        cin >> ending_char >> ending_int;
+        wanted_move.y_coordinate_target = 8 - ending_int; 
         if(cin.fail()){
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(),'\n');
-            cout<<"Invalid input, please enter an integer: "<<endl;
+            cout<<"Invalid input, please enter proper coordinates: "<<endl;
         }
-        if (wanted_move.y_coordinate_starting < 0 || wanted_move.y_coordinate_starting > 8 ||
-            wanted_move.x_coordinate_starting < 0 || wanted_move.x_coordinate_starting > 8 ||
-            wanted_move.y_coordinate_target < 0 || wanted_move.y_coordinate_target > 8 ||
-            wanted_move.x_coordinate_target < 0 || wanted_move.x_coordinate_target > 8) {
+
+        wanted_move.x_coordinate_starting = translating_chars_to_ints(starting_char);
+        wanted_move.x_coordinate_target = translating_chars_to_ints(ending_char);
+        
+        if (wanted_move.y_coordinate_starting < 0 || wanted_move.y_coordinate_starting > 7 ||
+            wanted_move.x_coordinate_starting < 0 || wanted_move.x_coordinate_starting > 7 ||
+            wanted_move.y_coordinate_target < 0 || wanted_move.y_coordinate_target > 7 ||
+            wanted_move.x_coordinate_target < 0 || wanted_move.x_coordinate_target > 7) {
             cout << "Invalid coordinates. Please try again." << endl;
         }
         else {
@@ -48,10 +90,11 @@ Move move_input() {
 
 
 void print_board(Piece board[8][8]){
-    cout<<"    0   1   2   3   4   5   6   7\n";
+    cout<<"    a   b   c   d   e   f   g   h\n";
     cout<<"  +---+---+---+---+---+---+---+---+\n";
-    for(int i = 0; i<8; i++){
-        cout<<i<<" |";
+    int x = 8;
+    for(int i = 0; i<8; i++, x--){
+        cout<<x<<" |";
         for(int j = 0; j<8; j++){
             if(board[i][j].color==true){
                 cout<<" "<<board[i][j].get_type()<<" |";
@@ -497,12 +540,15 @@ bool is_king_moving_to_check(Piece board[8][8], Move destination , vector<Move> 
                 checking_move.y_coordinate_target = destination.y_coordinate_target;
                 checking_move.x_coordinate_target = destination.x_coordinate_target;
                 if(is_move_possible(board, checking_move,board[i][j].color,previous_moves)){
+                    board[destination.y_coordinate_starting][destination.x_coordinate_starting] = board[destination.y_coordinate_target][destination.x_coordinate_target];
+                    board[destination.y_coordinate_target][destination.x_coordinate_target] = beaten_piece;
                     return true;
                 } 
             }
-            
         }
     }
+    board[destination.y_coordinate_starting][destination.x_coordinate_starting] = board[destination.y_coordinate_target][destination.x_coordinate_target];
+    board[destination.y_coordinate_target][destination.x_coordinate_target] = beaten_piece;
     return false;
 }
 
@@ -590,33 +636,36 @@ void make_move(Piece (&board)[8][8], Move desired_move, vector<Move> &list_of_mo
             board[desired_move.y_coordinate_target-1][desired_move.x_coordinate_target].type = ' ';
         }
     }
-    //sprawdzenie czy to krol sie rusza
-    Piece moving_piece = board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting];
-    if(moving_piece.type == 'K'){
-        if(moving_piece.color){
-            if(desired_move.y_coordinate_starting == desired_move.y_coordinate_target){
-                if(desired_move.x_coordinate_starting == 4 && desired_move.x_coordinate_target == 2){
-                    board[desired_move.y_coordinate_target][desired_move.x_coordinate_target] = board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting];
-                    board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting] = Piece();
-                    board[desired_move.y_coordinate_target][3] = board[desired_move.y_coordinate_target][0];
-                    board[desired_move.y_coordinate_target][0] = Piece();
-                    list_of_moves.push_back(desired_move);
-                }
-                else if(desired_move.x_coordinate_starting == 4 && desired_move.x_coordinate_target == 6){
-                    board[desired_move.y_coordinate_target][desired_move.x_coordinate_target] = board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting];
-                    board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting] = Piece();
-                    board[desired_move.y_coordinate_target][5] = board[desired_move.y_coordinate_target][7];
-                    board[desired_move.y_coordinate_target][7] = Piece();
-                    list_of_moves.push_back(desired_move);
-                }
-            }
+    //checking if king is moving (had to implement castle)
+    
+    if(board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting].type == 'K' && desired_move.y_coordinate_starting == desired_move.y_coordinate_target){
+        if(desired_move.x_coordinate_starting == 4 && desired_move.x_coordinate_target == 2){
+            board[desired_move.y_coordinate_target][desired_move.x_coordinate_target] = board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting];
+            board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting] = Piece();
+            board[desired_move.y_coordinate_target][3] = board[desired_move.y_coordinate_target][0];
+            board[desired_move.y_coordinate_target][0] = Piece();
+            list_of_moves.push_back(desired_move);
+        }
+        else if(desired_move.x_coordinate_starting == 4 && desired_move.x_coordinate_target == 6){
+            board[desired_move.y_coordinate_target][desired_move.x_coordinate_target] = board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting];
+            board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting] = Piece();
+            board[desired_move.y_coordinate_target][5] = board[desired_move.y_coordinate_target][7];
+            board[desired_move.y_coordinate_target][7] = Piece();
+            list_of_moves.push_back(desired_move);
+        }
+        else{
+            board[desired_move.y_coordinate_target][desired_move.x_coordinate_target]=board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting];
+            board[desired_move.y_coordinate_target][desired_move.x_coordinate_target].y_coordinate = desired_move.y_coordinate_target;
+            board[desired_move.y_coordinate_target][desired_move.x_coordinate_target].x_coordinate = desired_move.x_coordinate_target;
+            board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting].type = Piece();
+            list_of_moves.push_back(desired_move);
         }
     }
     else{
         board[desired_move.y_coordinate_target][desired_move.x_coordinate_target]=board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting];
         board[desired_move.y_coordinate_target][desired_move.x_coordinate_target].y_coordinate = desired_move.y_coordinate_target;
         board[desired_move.y_coordinate_target][desired_move.x_coordinate_target].x_coordinate = desired_move.x_coordinate_target;
-        board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting].type=' ';
+        board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting].type = Piece();
         list_of_moves.push_back(desired_move);
     }    
 }
@@ -652,8 +701,10 @@ void undo_move(Piece (&board)[8][8], vector<Move> &previous_moves){
 
 //had to extract this piece of code from function is_move_possible because it causes problems with function is_checked
 bool is_move_killing_king(Piece board[8][8], Move destination){
-    if(board[destination.y_coordinate_target][destination.x_coordinate_target].type=='K')
+    if(board[destination.y_coordinate_target][destination.x_coordinate_target].type=='K'){
         return true;
+    }
+        
     
     return false;
 }
