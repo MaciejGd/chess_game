@@ -311,7 +311,7 @@ bool is_move_possible(Piece board[8][8],Move destination, bool side, vector<Move
                     return true;
                 }
                 else if(destination.y_coordinate_target-destination.y_coordinate_starting<0){
-                    for(int i = destination.y_coordinate_target-1; i>destination.y_coordinate_target; i--){
+                    for(int i = destination.y_coordinate_starting-1; i>destination.y_coordinate_target; i--){
                         if(board[i][destination.x_coordinate_starting].type==' '){
                             continue;
                         }
@@ -339,6 +339,9 @@ bool is_move_possible(Piece board[8][8],Move destination, bool side, vector<Move
             }
             else if(destination.x_coordinate_target-destination.x_coordinate_starting==0 && abs(destination.y_coordinate_target-destination.y_coordinate_starting)==1){
                 return true;
+            }
+            else if(is_castle_possible(board, side, previous_moves, destination)){
+                return true;            
             }
             else{
                 return false;
@@ -398,6 +401,62 @@ bool is_move_possible(Piece board[8][8],Move destination, bool side, vector<Move
     return false;
 }
 
+//checking if castle is possible
+bool is_castle_possible(Piece board[8][8], bool side, vector<Move> previous_moves, Move castle){
+    //checking if good move coordinates has been given
+    if(side){
+        if(castle.y_coordinate_target != 7){
+            return false;
+        }
+        else if(castle.x_coordinate_target != 6 && castle.x_coordinate_target != 2){
+            return false;
+        }
+    }
+    else {
+        if(castle.y_coordinate_target != 0){
+            return false;
+        }
+        else if(castle.x_coordinate_target != 6 && castle.x_coordinate_target != 2){
+            return false;
+        }
+    }
+
+    //checking if there is no piece between rook and king in special environment
+    if(castle.x_coordinate_target == 2 && board[castle.y_coordinate_target][1].type != ' ')
+        return false;
+
+    //checking if king or rook was moved or if rook was taken
+    for(Move i : previous_moves){
+        if(side){
+            if(i.y_coordinate_starting == 7 && i.x_coordinate_starting == 4){
+                return false;
+            }
+            if(castle.x_coordinate_target == 2 && ((i.y_coordinate_starting == 7 && i.x_coordinate_starting == 0) ||(i.y_coordinate_target == 7 && i.x_coordinate_target == 0))){
+                return false;
+            }
+            else if(castle.x_coordinate_target == 6 && ((i.y_coordinate_starting == 7 && i.x_coordinate_starting == 7) || (i.y_coordinate_target == 7 && i.x_coordinate_target == 7))){
+                return false;
+            }
+            else if(castle.x_coordinate_target == 2 && board[7][1].type!=' '){
+                return false;
+            }
+        }
+        else{
+            if(i.y_coordinate_starting == 0 && i.x_coordinate_starting == 4){
+                return false;
+            }
+            if(castle.x_coordinate_target == 2 && ((i.y_coordinate_starting == 0 && i.x_coordinate_starting == 0) || (i.y_coordinate_target == 0 && i.x_coordinate_target == 0))){
+                return false;
+            }
+            else if(castle.x_coordinate_target == 6 && ((i.y_coordinate_starting == 0 && i.x_coordinate_starting == 7) || (i.y_coordinate_target == 7 && i.x_coordinate_target == 7))){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+//checking if king is checked
 bool is_checked(Piece board[8][8], Piece king, vector<Move> previous_moves){
     Move checking_move;
     for(int i = 0; i<8; i++){
@@ -417,7 +476,7 @@ bool is_checked(Piece board[8][8], Piece king, vector<Move> previous_moves){
     return false;
 }
 
-
+//checking if king is moving to check
 bool is_king_moving_to_check(Piece board[8][8], Move destination , vector<Move> previous_moves){
     
     Piece beaten_piece = Piece();
@@ -448,7 +507,7 @@ bool is_king_moving_to_check(Piece board[8][8], Move destination , vector<Move> 
 }
 
 
-
+//checking if there is poromotion
 bool is_promotion(Piece board[8][8], vector<Move> previous_moves){
     Move last_move = previous_moves.back();
     if(board[last_move.y_coordinate_target][last_move.x_coordinate_target].type == 'P'){
@@ -467,6 +526,7 @@ bool is_promotion(Piece board[8][8], vector<Move> previous_moves){
     
 }
 
+//making promotion
 void promotion(Piece (&board)[8][8], vector<Move> previous_moves){
     Move last_move = previous_moves.back();
     if(is_promotion(board,previous_moves)){
@@ -507,8 +567,7 @@ void promotion(Piece (&board)[8][8], vector<Move> previous_moves){
 
 }
 
-//if x is same after the move and 
-
+//checking if en passant is possible
 bool is_en_passant_possible(Piece board[8][8], vector<Move> previous_moves, Move pawn_move){
     Move last_move = previous_moves.back();
     if(board[last_move.y_coordinate_target][last_move.x_coordinate_target].type!='P')
@@ -520,6 +579,7 @@ bool is_en_passant_possible(Piece board[8][8], vector<Move> previous_moves, Move
     return true;
 }
 
+//making move on a board
 void make_move(Piece (&board)[8][8], Move desired_move, vector<Move> &list_of_moves){
     //statement to erase pawn beaten with en passant
     if(board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting].type=='P' && board[desired_move.y_coordinate_target][desired_move.x_coordinate_target].type==' ' && desired_move.x_coordinate_target!=desired_move.x_coordinate_starting){
@@ -530,12 +590,35 @@ void make_move(Piece (&board)[8][8], Move desired_move, vector<Move> &list_of_mo
             board[desired_move.y_coordinate_target-1][desired_move.x_coordinate_target].type = ' ';
         }
     }
-    board[desired_move.y_coordinate_target][desired_move.x_coordinate_target]=board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting];
-    board[desired_move.y_coordinate_target][desired_move.x_coordinate_target].y_coordinate = desired_move.y_coordinate_target;
-    board[desired_move.y_coordinate_target][desired_move.x_coordinate_target].x_coordinate = desired_move.x_coordinate_target;
-    board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting].type=' ';
-    list_of_moves.push_back(desired_move);
-        
+    //sprawdzenie czy to krol sie rusza
+    Piece moving_piece = board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting];
+    if(moving_piece.type == 'K'){
+        if(moving_piece.color){
+            if(desired_move.y_coordinate_starting == desired_move.y_coordinate_target){
+                if(desired_move.x_coordinate_starting == 4 && desired_move.x_coordinate_target == 2){
+                    board[desired_move.y_coordinate_target][desired_move.x_coordinate_target] = board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting];
+                    board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting] = Piece();
+                    board[desired_move.y_coordinate_target][3] = board[desired_move.y_coordinate_target][0];
+                    board[desired_move.y_coordinate_target][0] = Piece();
+                    list_of_moves.push_back(desired_move);
+                }
+                else if(desired_move.x_coordinate_starting == 4 && desired_move.x_coordinate_target == 6){
+                    board[desired_move.y_coordinate_target][desired_move.x_coordinate_target] = board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting];
+                    board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting] = Piece();
+                    board[desired_move.y_coordinate_target][5] = board[desired_move.y_coordinate_target][7];
+                    board[desired_move.y_coordinate_target][7] = Piece();
+                    list_of_moves.push_back(desired_move);
+                }
+            }
+        }
+    }
+    else{
+        board[desired_move.y_coordinate_target][desired_move.x_coordinate_target]=board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting];
+        board[desired_move.y_coordinate_target][desired_move.x_coordinate_target].y_coordinate = desired_move.y_coordinate_target;
+        board[desired_move.y_coordinate_target][desired_move.x_coordinate_target].x_coordinate = desired_move.x_coordinate_target;
+        board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting].type=' ';
+        list_of_moves.push_back(desired_move);
+    }    
 }
 //if enemy was beaten it will return the piece it beaten so the undo move would bring this piece back to life
 Piece if_beaten(Piece board[8][8], Move move){
@@ -554,6 +637,7 @@ Piece if_beaten(Piece board[8][8], Move move){
     return Piece();
 }
 
+//undoing not proper move
 void undo_move(Piece (&board)[8][8], vector<Move> &previous_moves){
     Move re_move = previous_moves.back();
     previous_moves.pop_back(); 
@@ -563,8 +647,9 @@ void undo_move(Piece (&board)[8][8], vector<Move> &previous_moves){
     int starting_y = re_move.y_coordinate_target;
     Move undo = {starting_y, starting_x, target_y, target_x};
     make_move(board, undo, previous_moves);
-    //previous_moves.pop_back(); 
+    previous_moves.pop_back(); 
 }
+
 //had to extract this piece of code from function is_move_possible because it causes problems with function is_checked
 bool is_move_killing_king(Piece board[8][8], Move destination){
     if(board[destination.y_coordinate_target][destination.x_coordinate_target].type=='K')
@@ -573,6 +658,7 @@ bool is_move_killing_king(Piece board[8][8], Move destination){
     return false;
 }
 
+//checking if there is end of the game
 bool game_won(Piece board[8][8], Piece king, vector<Move> previous_moves){
     Piece beaten_piece;
     Move possible_cover;

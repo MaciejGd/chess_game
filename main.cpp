@@ -69,9 +69,9 @@ int main(){
                     cout<<"Cant move like this because of check. Try again."<<endl;
                     not_proper_move = true;
                 }
-                else if(is_promotion(board, previous_moves)){
-                    promotion(board, previous_moves);
-                } 
+                
+                promotion(board, previous_moves);
+                 
             }
             else{
                 cout<<"Move is not possible, try again:"<<endl;
@@ -100,9 +100,9 @@ int main(){
                     cout<<"Cant move like this because of check. Try again."<<endl;
                     not_proper_move = true;
                 }
-                else if(is_promotion(board, previous_moves)){
-                    promotion(board, previous_moves);
-                }
+                
+                promotion(board, previous_moves);
+                
             }
             else{
                 cout<<"Move is not possible, try again:"<<endl;
