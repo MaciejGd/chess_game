@@ -446,7 +446,10 @@ bool is_move_possible(Piece board[8][8],Move destination, bool side, vector<Move
 
 //checking if castle is possible
 bool is_castle_possible(Piece board[8][8], bool side, vector<Move> previous_moves, Move castle){
-    //checking if good move coordinates has been given
+    //checking if good move coordinates has been given and if king is not checked 
+    if(is_checked(board, board[castle.y_coordinate_starting][castle.x_coordinate_starting], previous_moves)){
+        return false;
+    }
     if(side){
         if(castle.y_coordinate_target != 7){
             return false;
