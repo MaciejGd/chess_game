@@ -69,9 +69,7 @@ int main(){
                     cout<<"Cant move like this because of check. Try again."<<endl;
                     not_proper_move = true;
                 }
-                
-                promotion(board, previous_moves);
-                 
+                promotion(board, previous_moves);     
             }
             else{
                 cout<<"Move is not possible, try again:"<<endl;
@@ -79,13 +77,11 @@ int main(){
         }
         not_proper_move = true;
         print_board(board);
-
         if(game_won(board, king_black, previous_moves)){
             cout<<"White won, good job!";
             system("PAUSE");
             return 0;
         }
-        
         
         //void make_move(Piece (&board)[8][8], Move desired_move, vector<Move> list_of_moves, bool side)
         while(not_proper_move){
@@ -100,27 +96,18 @@ int main(){
                     cout<<"Cant move like this because of check. Try again."<<endl;
                     not_proper_move = true;
                 }
-                
-                promotion(board, previous_moves);
-                
+                promotion(board, previous_moves);   
             }
             else{
                 cout<<"Move is not possible, try again:"<<endl;
             }
-
         }
         print_board(board);
         if(game_won(board, king_black, previous_moves)){
             cout<<"White won, good job!";
             system("PAUSE");
             return 0;
-        }
-        
-        
-        
+        }   
     }
-
-    
-    
     return 0;
 }
