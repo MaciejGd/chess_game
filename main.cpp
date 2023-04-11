@@ -82,6 +82,11 @@ int main(){
             system("PAUSE");
             return 0;
         }
+        else if(stealmate(board, king_black, previous_moves)){
+            cout<<"Stealmate, thats a draw.";
+            system("PAUSE");
+            return 0;
+        }  
         
         //void make_move(Piece (&board)[8][8], Move desired_move, vector<Move> list_of_moves, bool side)
         while(not_proper_move){
@@ -105,6 +110,11 @@ int main(){
         print_board(board);
         if(game_won(board, king_white, previous_moves)){
             cout<<"Black won, good job!";
+            system("PAUSE");
+            return 0;
+        }
+        else if(stealmate(board, king_white, previous_moves)){
+            cout<<"Stealmate, thats a draw.";
             system("PAUSE");
             return 0;
         }   

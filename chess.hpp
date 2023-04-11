@@ -53,6 +53,7 @@ Piece if_beaten(Piece board[8][8], Move move);
 //bool functions implementing chess rules
 bool is_move_possible(Piece board[8][8], Move destination, bool side, vector<Move> previous_moves);
 bool game_won(Piece board[8][8], Piece king, vector<Move> previous_moves);
+bool stealmate(Piece board[8][8], Piece king, vector<Move> previous_moves);
 
 //bool functions implementing chess rules - king related
 bool is_checked(Piece board[8][8], Piece king, vector<Move> previous_moves);

@@ -660,7 +660,7 @@ void make_move(Piece (&board)[8][8], Move desired_move, vector<Move> &list_of_mo
             board[desired_move.y_coordinate_target][desired_move.x_coordinate_target]=board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting];
             board[desired_move.y_coordinate_target][desired_move.x_coordinate_target].y_coordinate = desired_move.y_coordinate_target;
             board[desired_move.y_coordinate_target][desired_move.x_coordinate_target].x_coordinate = desired_move.x_coordinate_target;
-            board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting].type = Piece();
+            board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting] = Piece();
             list_of_moves.push_back(desired_move);
         }
     }
@@ -668,7 +668,7 @@ void make_move(Piece (&board)[8][8], Move desired_move, vector<Move> &list_of_mo
         board[desired_move.y_coordinate_target][desired_move.x_coordinate_target]=board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting];
         board[desired_move.y_coordinate_target][desired_move.x_coordinate_target].y_coordinate = desired_move.y_coordinate_target;
         board[desired_move.y_coordinate_target][desired_move.x_coordinate_target].x_coordinate = desired_move.x_coordinate_target;
-        board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting].type = Piece();
+        board[desired_move.y_coordinate_starting][desired_move.x_coordinate_starting] = Piece();
         list_of_moves.push_back(desired_move);
     }    
 }
@@ -743,3 +743,25 @@ bool game_won(Piece board[8][8], Piece king, vector<Move> previous_moves){
     return false;
 }
 
+//stealmate mechanics
+bool stealmate(Piece board[8][8], Piece king, vector<Move> previous_moves){
+    Move move;
+    for(int i = 0; i<8; i++){
+        for(int j = 0; j<8; j++){
+            if(board[i][j].color == king.color){
+                for(int y = 0; y<8; y++){
+                    for(int x = 0; x<8; x++){
+                        move.y_coordinate_starting = i;
+                        move.x_coordinate_starting = j;
+                        move.y_coordinate_target = y;
+                        move.x_coordinate_target = x;
+                        if(is_move_possible(board, move, king.color, previous_moves)){
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return true;
+}
