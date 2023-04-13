@@ -707,8 +707,6 @@ bool is_move_killing_king(Piece board[8][8], Move destination){
     if(board[destination.y_coordinate_target][destination.x_coordinate_target].type=='K'){
         return true;
     }
-        
-    
     return false;
 }
 
@@ -728,6 +726,8 @@ bool game_won(Piece board[8][8], Piece king, vector<Move> previous_moves){
                                 board[possible_cover.y_coordinate_target][possible_cover.x_coordinate_target] = board[possible_cover.y_coordinate_starting][possible_cover.x_coordinate_starting];
                                 board[possible_cover.y_coordinate_starting][possible_cover.x_coordinate_starting] = Piece();
                                 if(!is_checked(board, king, previous_moves)){
+                                    board[possible_cover.y_coordinate_starting][possible_cover.x_coordinate_starting] = board[possible_cover.y_coordinate_target][possible_cover.x_coordinate_target];
+                                    board[possible_cover.y_coordinate_target][possible_cover.x_coordinate_target] = beaten_piece;
                                     return false;
                                 }
                                 board[possible_cover.y_coordinate_starting][possible_cover.x_coordinate_starting] = board[possible_cover.y_coordinate_target][possible_cover.x_coordinate_target];

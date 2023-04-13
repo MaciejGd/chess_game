@@ -117,7 +117,7 @@ int main(){
             cout<<"Stealmate, thats a draw.";
             system("PAUSE");
             return 0;
-        }   
+        }  
     }
     return 0;
 }
