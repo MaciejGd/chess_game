@@ -33,8 +33,6 @@ class Piece{
             type=' ';
             color=false;
         }
-        char get_type();
-        Move get_all_possible_moves(Piece board[8][8], Piece element);
 };
 
 //functions to print board and taking input from user
