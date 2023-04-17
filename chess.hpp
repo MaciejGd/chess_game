@@ -14,12 +14,13 @@ struct Move{
 
 //piece representing pieces, for empty fields there is an empty constructor
 class Piece{
-
+    int y_coordinate;
+    int x_coordinate;
+    char type;
+    bool color;
+    
     public:
-        int y_coordinate;
-        int x_coordinate;
-        char type;
-        bool color;
+        
 
         Piece(int y, int x, bool side, char t){
             y_coordinate = y;
@@ -33,6 +34,13 @@ class Piece{
             type=' ';
             color=false;
         }
+
+        void change_type(char desired_type);
+        void change_coordinates(int y, int x);
+        int get_x();
+        int get_y();
+        bool get_color();
+        char get_type();
 };
 
 //functions to print board and taking input from user
