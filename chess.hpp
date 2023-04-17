@@ -70,8 +70,3 @@ bool is_castle_possible(Piece board[8][8], bool side, vector<Move> previous_move
 //bool functions implementing chess rules - pawn related
 bool is_promotion(Piece board[8][8], vector<Move> previous_moves);
 bool is_en_passant_possible(Piece board[8][8], vector<Move> previous_moves, Move pawn_move);
-
-
-
-
-

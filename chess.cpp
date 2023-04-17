@@ -786,5 +786,3 @@ bool is_en_passant_possible(Piece board[8][8], vector<Move> previous_moves, Move
         return false;
     return true;
 }
-
-
