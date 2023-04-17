@@ -33,7 +33,7 @@ bool Piece::get_color(){
     return color;
 }
 
-//function to read a char as integer we want
+//function to read a char as integer
 int translating_chars_to_ints(char first_coordinate){
     int result;
     switch(first_coordinate){

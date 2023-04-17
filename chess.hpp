@@ -48,7 +48,7 @@ int translating_chars_to_ints(char first_coordinate);
 void print_board(Piece board[8][8]);
 Move move_input();
 
-//functions used to modify board status
+//functions used to modify board
 void make_move(Piece (&board)[8][8], Move desired_move, vector<Move> &list_of_moves);
 void undo_move(Piece (&board)[8][8], vector<Move> &previous_moves);
 void promotion(Piece (&board)[8][8], vector<Move> previous_moves);

@@ -56,7 +56,6 @@ int main(){
 
     while(!mate){
         bool not_proper_move = true;
-        //bool is_move_possible(Piece board[8][8], Move target, bool side, vector<Move> previous_moves);
         while(not_proper_move){
             move_user = move_input();
             if(is_move_possible(board, move_user, white, previous_moves) && !is_move_killing_king(board,move_user)){
@@ -88,7 +87,6 @@ int main(){
             return 0;
         }  
         
-        //void make_move(Piece (&board)[8][8], Move desired_move, vector<Move> list_of_moves, bool side)
         while(not_proper_move){
             move_user = move_input();
             if(is_move_possible(board, move_user, black , previous_moves) && !is_move_killing_king(board,move_user)){
